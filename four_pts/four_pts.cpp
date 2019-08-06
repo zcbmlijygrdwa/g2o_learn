@@ -87,8 +87,6 @@ class MyBinaryEdge : public BaseBinaryEdge <1, double, MyVertexXY, MyVertexXY>
             //cout<<"_measurement = "<<_measurement<<endl;
 
 
-
-
             _error = Eigen::Matrix<double,1,1>();
 
             _error(0,0) = _measurement - sqrt(((myEstimate1[0]-myEstimate2[0])*(myEstimate1[0]-myEstimate2[0]) + (myEstimate1[1]-myEstimate2[1])*(myEstimate1[1]-myEstimate2[1])));
@@ -134,32 +132,90 @@ int main()
     // first adding all the vertices
     cerr << "Optimization: Adding robot poses ... "<<endl;
 
+
+    std::vector<std::pair<MyVertexXY*, MyVertexXY*> > vertexPairSet;
+    std::vector<MyBinaryEdge*> edgeSet;
+
+
     MyVertexXY* v1 = new MyVertexXY();
     v1->setId(1);
-    v1->setEstimate(Eigen::Vector2d(0.01,0.012));
+    v1->setEstimate(Eigen::Vector2d(0.0,2.01));
     optimizer.addVertex(v1);
-
 
     MyVertexXY* v2 = new MyVertexXY();
     v2->setId(2);
-    v2->setEstimate(Eigen::Vector2d(0,1.9));
+    v2->setEstimate(Eigen::Vector2d(2,1.64));
     optimizer.addVertex(v2);
+    vertexPairSet.push_back(std::pair<MyVertexXY*, MyVertexXY*>(v1,v2));
 
     MyBinaryEdge* e = new MyBinaryEdge(); 
-
     e -> setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v1));
     e -> setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v2));
-
-    cout<<"optimizer.vertices().find(0) = "<<optimizer.vertices().size()<<endl;
     e -> setMeasurement(2);
     e -> information() = Eigen::Matrix<double,1,1>::Identity();
     optimizer.addEdge(e);
+    edgeSet.push_back(e); 
+
+    //-------
+    MyVertexXY* v3 = new MyVertexXY();
+
+    v3 = new MyVertexXY();
+    v3->setId(3);
+    v3->setEstimate(Eigen::Vector2d(2.4,-0.16));
+    optimizer.addVertex(v3);
+    vertexPairSet.push_back(std::pair<MyVertexXY*, MyVertexXY*>(v2,v3));
+
+    e = new MyBinaryEdge(); 
+    e -> setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v2));
+    e -> setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v3));
+    e -> setMeasurement(2);
+    e -> information() = Eigen::Matrix<double,1,1>::Identity();
+    optimizer.addEdge(e);
+    edgeSet.push_back(e); 
+
+
+    //-------
+    MyVertexXY* v4 = new MyVertexXY();
+
+    v4 = new MyVertexXY();
+    v4->setId(4);
+    v4->setEstimate(Eigen::Vector2d(0.1,0.3));
+    optimizer.addVertex(v4);
+    vertexPairSet.push_back(std::pair<MyVertexXY*, MyVertexXY*>(v3,v4));
+
+    e = new MyBinaryEdge(); 
+    e -> setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v3));
+    e -> setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v4));
+    e -> setMeasurement(2);
+    e -> information() = Eigen::Matrix<double,1,1>::Identity();
+    optimizer.addEdge(e);
+    edgeSet.push_back(e); 
+
+    ////-------
+    e = new MyBinaryEdge(); 
+    e -> setVertex(0, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v2));
+    e -> setVertex(1, dynamic_cast<g2o::OptimizableGraph::Vertex*>(v4));
+    e -> setMeasurement(2.82842712475);
+    e -> information() = Eigen::Matrix<double,1,1>::Identity();
+    optimizer.addEdge(e);
+    edgeSet.push_back(e); 
+
+
+
+    //set v1 to be fixed, no need to change it.
+    v1->setFixed(true);
+
     optimizer.initializeOptimization();
     cout << "optimizer.initializeOptimization" << endl;
 
-    optimizer.optimize(10); 
-    
+    optimizer.setVerbose(true);
+
+    optimizer.optimize(50); 
+
     cout<<"v1->estimate() = "<<v1->estimate()<<endl;
     cout<<"v2->estimate() = "<<v2->estimate()<<endl;
+    cout<<"v3->estimate() = "<<v3->estimate()<<endl;
+    cout<<"v4->estimate() = "<<v4->estimate()<<endl;
+
     return 0;
 }
