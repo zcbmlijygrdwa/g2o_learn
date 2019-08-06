@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/four_pts.dir/four_pts.cpp.o  -o four_pts -lg2o_core -lg2o_types_slam2d -lg2o_types_slam3d -lg2o_solver_csparse -lg2o_stuff -lg2o_csparse_extension -lg2o_types_sba -lcxsparse 

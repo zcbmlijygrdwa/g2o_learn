@@ -1,0 +1,3 @@
+/home/zhenyu/g2o_learn/four_pts/build/CMakeFiles/rebuild_cache.dir
+/home/zhenyu/g2o_learn/four_pts/build/CMakeFiles/four_pts.dir
+/home/zhenyu/g2o_learn/four_pts/build/CMakeFiles/edit_cache.dir
